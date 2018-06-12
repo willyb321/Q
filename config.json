@@ -1,0 +1,13 @@
+{
+  "ravenDSN": "https://39aaa4e667bc491caf107c7563b75e98@sentry.io/1207504",
+  "token": "NDMwNDc2MTk0NDA0NjMwNTI4.DaQvuA.blYPDdwcNL6g5eJnQbTQXc8orIE",
+  "mongoURL": "mongodb://localhost:27017/new-roa-bot",
+  "ownerID": "121791193301385216",
+  "botName": "New-RoA-Bot",
+  "inaraCookieElitesheet": "2135.2135xlbbwsfybr1so80gw80ww0wowswks0g8",
+  "inaraCookieEsid": "a96eeb504ad90d6078a16f547a6b023c",
+  "edsmKey": "3a3cc0671c55f83676ef9a385fabaccbd628a6b5",
+  "redditClientId": "DAAajoxF5DXlLw",
+  "redditClientSecret": "DXv3wdo8nw6xMUtbtnUK91W6rPs",
+  "redditRefreshToken": "18076738-swOLRC4JUTzX48lI3_jFvc1qJ70"
+}
