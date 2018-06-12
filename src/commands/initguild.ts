@@ -57,7 +57,7 @@ export class InitGuildCommand extends Commando.Command {
 			console.error(err);
 			Raven.captureException(err);
 		}
-        return msg.channel.send(`Bot channel set to ${msg.channel.toString()}`);
+        return msg.channel.send(`Bot channel set to ${msg.channel.toString()}. Inara lookup on member join: ${args.inara}`);
     }
 
 }
