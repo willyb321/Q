@@ -1,4 +1,3 @@
-
 /**
  * @module Index
  */
@@ -9,12 +8,12 @@
 import 'source-map-support/register';
 import * as Commando from 'discord.js-commando';
 import * as Raven from 'raven';
-import {config} from './utils';
+import {config, getCmdrInfoFromInara, writeLog} from './utils';
 import {basename, join} from 'path';
 import * as sqlite from 'sqlite';
 import {oneLine} from 'common-tags';
-import {createGunzip} from "zlib";
-import {TextChannel} from "discord.js";
+import {createGunzip} from 'zlib';
+import {TextChannel} from 'discord.js';
 
 process.on('uncaughtException', err => {
 	console.error(err);
@@ -28,7 +27,7 @@ process.on('unhandledRejection', (err: Error) => {
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback (data) { // source maps
+	dataCallback(data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -52,12 +51,15 @@ export const client = new Commando.Client({
 
 client
 	.on('error', console.error)
-	.on('debug', process.env.NODE_ENV === 'development' ? console.info : () => {})
+	.on('debug', process.env.NODE_ENV === 'development' ? console.info : () => {
+	})
 	.on('warn', console.warn)
 	.on('disconnect', () => console.warn('Disconnected!'))
 	.on('reconnecting', () => console.warn('Reconnecting...'))
 	.on('commandError', (cmd, err) => {
-		if (err instanceof Commando.FriendlyError) { return; }
+		if (err instanceof Commando.FriendlyError) {
+			return;
+		}
 		console.error(`Error in command ${cmd.groupID}:${cmd.memberName}`, err);
 	})
 	.on('commandBlocked', (msg, reason) => {
@@ -124,7 +126,13 @@ client.on('guildMemberAdd', (member) => {
 	if (channel) {
 		const chan = member.guild.channels.get(channel) as TextChannel;
 		if (chan) {
-			return chan.send(`Welcome to ${member.guild.name}, ${member.toString()}`);
+			chan.send(`Welcome to ${member.guild.name}, ${member.toString()}`);
+			return getCmdrInfoFromInara(member.displayName).then(embeddedObject => {
+				if (embeddedObject instanceof Commando.FriendlyError) {
+					return chan.send(embeddedObject.message)
+				}
+				return chan.send({embed: embeddedObject});
+			});
 		}
 	}
 });
