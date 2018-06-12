@@ -50,7 +50,7 @@ export class SysCommand extends Commando.Command {
 	}
 
 	hasPermission(msg) {
-		return msg.client.isOwner(msg.author);
+		return true
 	}
 
 	async run(msg, args) {
