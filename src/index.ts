@@ -123,10 +123,14 @@ client.login(config.token)
 
 client.on('guildMemberAdd', (member) => {
 	const channel = client.provider.get(member.guild, 'botSpam');
+	const lookup = client.provider.get(member.guild, 'botSpamInara', false);
 	if (channel) {
 		const chan = member.guild.channels.get(channel) as TextChannel;
 		if (chan) {
 			chan.send(`Welcome to ${member.guild.name}, ${member.toString()}`);
+			if (!lookup) {
+				return;
+			}
 			return getCmdrInfoFromInara(member.displayName).then(embeddedObject => {
 				if (embeddedObject instanceof Commando.FriendlyError) {
 					return chan.send(embeddedObject.message)

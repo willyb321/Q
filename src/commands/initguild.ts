@@ -35,7 +35,13 @@ export class InitGuildCommand extends Commando.Command {
             description: 'initguild.',
             details: 'initguild.',
             examples: ['initguild'],
-            guildOnly: true
+            guildOnly: true,
+			args: [
+				{
+					label: 'inara', key: 'inara',
+					prompt: 'Look member up on Inara when joining?', type: 'boolean'
+				}
+			]
         });
     }
 
@@ -43,9 +49,10 @@ export class InitGuildCommand extends Commando.Command {
         return msg.client.isOwner(msg.author);
     }
 
-    async run(msg) {
+    async run(msg, args) {
     	try {
-			await msg.client.provider.set(msg.guild, 'botSpam', msg.channel.id)
+			await msg.client.provider.set(msg.guild, 'botSpam', msg.channel.id);
+			await msg.client.provider.set(msg.guild, 'botSpamInara', args.inara)
 		} catch (err) {
 			console.error(err);
 			Raven.captureException(err);
