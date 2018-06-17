@@ -23,6 +23,7 @@
     "libsodium-wrappers": "^0.5.4",
     "lodash": "^4.17.5",
     "mathjs": "latest",
+    "moment": "^2.22.2",
     "mongoose": "^5.0.13",
     "nanoid": "^1.0.2",
     "raven": "^2.4.2",

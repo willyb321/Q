@@ -40,6 +40,14 @@ export class InitGuildCommand extends Commando.Command {
 				{
 					label: 'inara', key: 'inara',
 					prompt: 'Look member up on Inara when joining?', type: 'boolean'
+				},
+				{
+					label: 'joinmsg', key: 'joinmsg',
+					prompt: 'Mention user on join?', type: 'boolean'
+				},
+				{
+					label: 'leavemsg', key: 'leavemsg',
+					prompt: 'Announce leave?', type: 'boolean'
 				}
 			]
         });
@@ -52,7 +60,9 @@ export class InitGuildCommand extends Commando.Command {
     async run(msg, args) {
     	try {
 			await msg.client.provider.set(msg.guild, 'botSpam', msg.channel.id);
-			await msg.client.provider.set(msg.guild, 'botSpamInara', args.inara)
+			await msg.client.provider.set(msg.guild, 'botSpamInara', args.inara);
+			await msg.client.provider.set(msg.guild, 'botSpamJoin', args.joinmsg);
+			await msg.client.provider.set(msg.guild, 'botSpamLeave', args.leavemsg);
 		} catch (err) {
 			console.error(err);
 			Raven.captureException(err);

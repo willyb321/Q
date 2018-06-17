@@ -122,6 +122,10 @@ client.login(config.token)
 	});
 
 client.on('guildMemberAdd', (member) => {
+	console.log(`Welcome to ${member.guild.name}, ${member.user.tag}`);
+	if (!client.provider.get(member.guild, 'botSpamJoin', false)) {
+		return
+	}
 	const channel = client.provider.get(member.guild, 'botSpam');
 	const lookup = client.provider.get(member.guild, 'botSpamInara', false);
 	if (channel) {
@@ -142,6 +146,10 @@ client.on('guildMemberAdd', (member) => {
 });
 
 client.on('guildMemberRemove', (member) => {
+	console.log(`\`${member.user.tag}\` left ${member.guild.name}`);
+	if (!client.provider.get(member.guild, 'botSpamLeave', false)) {
+		return
+	}
 	const channel = client.provider.get(member.guild, 'botSpam');
 	if (channel) {
 		const chan = member.guild.channels.get(channel) as TextChannel;
