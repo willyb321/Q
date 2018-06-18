@@ -12,6 +12,9 @@ export const config: IConfig = require(confToUse);
 export interface IConfig {
 	ravenDSN: string;
 	token: string;
+	dbName: string;
+	dbUser: string;
+	dbPwd: string;
 	mongoURL: string;
 	ownerID: string[];
 	inaraCookieElitesheet: string;
