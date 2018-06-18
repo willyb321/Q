@@ -169,7 +169,7 @@ client.on('guildMemberRemove', (member) => {
 	if (channel) {
 		const chan = member.guild.channels.get(channel) as TextChannel;
 		if (chan) {
-			return chan.send(`\`${member.user.tag}\` left ${member.guild.name}`);
+			return chan.send(`\`${member.user.tag.replace('`', '')}\` left ${member.guild.name}`);
 		}
 	}
 });
