@@ -121,8 +121,6 @@ export function getCmdrInfoFromInara(name) { // Search inara for a CMDR, do some
 
 export function getEdsmApiResult(page, log?) { // Query EDSM's api for something
 	writeLog(`Retrieving EDSM APIv1 results: https://www.edsm.net/api-v1/${page}`, 'HTTP');
-	console.log(page);
-	console.log(log)
 	return rp({
 		url: !log ? 'https://www.edsm.net/api-v1/' + page : 'https://www.edsm.net/api-logs-v1/' + page,
 		headers: {
