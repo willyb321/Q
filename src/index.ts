@@ -98,15 +98,26 @@ client.setProvider(
 
 // The ready event is vital, it means that your bot will only start reacting to information
 // from Discord _after_ ready is emitted
-client.on('ready', () => {
+client.on('ready', async () => {
 	console.log(`Client ready; logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
-	client.user.setActivity('with the human race')
-		.then(() => {
+	try {
+		await client.user.setActivity('with the human race');
+	} catch (err) {
+		Raven.captureException(err);
+	}
+	client.guilds.forEach(async guild => {
+		try {
+			await guild.me.setNickname('Q');
+		} catch (err) {
+			if (err.message !== 'You do not have permission to change this user\'s nickname.') {
+				console.error(err);
+				Raven.captureException(err);
+			} else {
+				console.log(`Failed to change nickname in ${guild.name} - missing perms.`);
+			}
+		}
+	})
 
-		})
-		.catch(err => {
-			Raven.captureException(err);
-		});
 });
 
 client.registry
