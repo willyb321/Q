@@ -5,7 +5,25 @@ import * as Discord from 'discord.js';
 import * as consola from 'consola';
 import * as rp from 'request-promise';
 import * as Commando from "discord.js-commando";
+import * as Raven from 'raven';
+import {basename} from "path";
 
+Raven.config(config.ravenDSN, {
+	autoBreadcrumbs: true,
+	dataCallback(data) { // source maps
+		const stacktrace = data.exception && data.exception[0].stacktrace;
+
+		if (stacktrace && stacktrace.frames) {
+			stacktrace.frames.forEach(frame => {
+				if (frame.filename.startsWith('/')) {
+					frame.filename = 'app:///' + basename(frame.filename);
+				}
+			});
+		}
+
+		return data;
+	}
+}).install();
 export const genEmbed = (title, desc) => new Discord.MessageEmbed()
 	.setTitle(title)
 	.setAuthor(config.botName, 'https://willb.info/images/2018/06/05/3d6d829d1cb595eccf43eca5638f2883.png')
@@ -37,9 +55,13 @@ export function getInaraPage(page): any { // Grab a whole page's HTML from INARA
 			})
 			.catch(err => {
 				writeLog('Failed to retrieve INARA page: ' + err, 'HTTP');
+				console.error(err);
+				Raven.captureException(err);
 				return null;
 			});
 	} catch (err) {
+		console.error(err);
+		Raven.captureException(err);
 		writeLog('Failed to retrieve INARA page: ' + err, 'HTTP');
 		return null;
 	}
@@ -118,6 +140,8 @@ export function getEdsmApiResult(page, log?) { // Query EDSM's api for something
 		return body;
 	})
 		.catch(err => {
+			console.error(err);
+			Raven.captureException(err);
 			writeLog(`Error retrieving EDSM APIv1 result: ${err}`, 'HTTP');
 		})
 }

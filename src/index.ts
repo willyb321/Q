@@ -50,7 +50,10 @@ export const client = new Commando.Client({
 });
 
 client
-	.on('error', console.error)
+	.on('error', err => {
+		console.error(err);
+		Raven.captureException(err);
+	})
 	.on('debug', process.env.NODE_ENV === 'development' ? console.info : () => {
 	})
 	.on('warn', console.warn)
@@ -101,8 +104,9 @@ client.setProvider(
 client.on('ready', async () => {
 	console.log(`Client ready; logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
 	try {
-		await client.user.setActivity('with the human race');
+		await client.user.setActivity('with the human race', {type: 'PLAYING'});
 	} catch (err) {
+		console.error(err);
 		Raven.captureException(err);
 	}
 	client.guilds.forEach(async guild => {

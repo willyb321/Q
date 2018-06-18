@@ -10,7 +10,6 @@ import {basename} from 'path';
 import * as Raven from 'raven';
 import * as mathjs from 'mathjs';
 import * as moment from 'moment';
-
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
 	dataCallback(data) { // source maps
@@ -93,6 +92,7 @@ export class DistCommand extends Commando.Command {
 
 		} catch (err) {
 			console.error(err);
+			Raven.captureException(err);
 		}
 	}
 }

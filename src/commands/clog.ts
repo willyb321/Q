@@ -49,6 +49,7 @@ export class ECLCommand extends Commando.Command {
 			elems = await lookUpOnECL(args.name);
 		} catch (err) {
 			console.error(err);
+			console.error(err);
 			return message.channel.send('Something broke. Ping willyb321#2816');
 		}
 		const embed = genEmbed('Combat logger found', '')

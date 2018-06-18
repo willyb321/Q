@@ -60,6 +60,7 @@ export class SysCommand extends Commando.Command {
 			})
 			.catch(err => {
 				console.error(err);
+				Raven.captureException(err);
 				return;
 			})
 	}

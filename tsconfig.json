@@ -3,6 +3,8 @@
 		"module": "commonjs",
 		"outDir": "dist/",
 		"target": "es2015",
+    "inlineSources": true,
+    "sourceRoot": "/",
 		"lib": ["es2017", "es2016", "dom", "es2015"],
 		"sourceMap": true,
 		"moduleResolution": "node",
