@@ -42,12 +42,13 @@ export class UploadCommand extends Commando.Command {
 			description: 'Upload your journals.',
 			details: 'Upload your journals.',
 			examples: ['upload <attach zip of logs>'],
-			guildOnly: false
+			guildOnly: false,
+
 		});
 	}
 
 	hasPermission(msg) {
-		return true;
+		return msg.client.isOwner(msg.author);
 	}
 
 	async run(msg) {
@@ -112,7 +113,8 @@ function openZip(tmppath, msg) {
 	});
 }
 
-const blacklistedEvents = ['ReceiveText', 'FuelScoop', 'StartJump', 'SendText', 'ApproachSettlement', 'SupercruiseExit', 'Fileheader', 'RefuelAll', 'SupercruiseEntry'];
+const blacklistedEvents = ['ReceiveText', 'FuelScoop', 'StartJump', 'SendText', 'ApproachSettlement', 'SupercruiseExit', 'Fileheader', 'RefuelAll', 'SupercruiseEntry', 'EngineerCraft', 'EngineerApply', 'EngineerContribution', 'EngineerLegacyConvert', 'EngineerProgress', 'FetchRemoteModule'];
+const whitelistedEvents = ['Location', 'FSDJump', 'SupercruiseEntry', 'SupercruiseExit', 'StartJump', 'Died', 'PVPKill'];
 
 function readLog(log, msg) {
 	const lr = new LineByLineReader(log);
@@ -179,9 +181,7 @@ function processLogLine(line, cmdr, msg) {
 	if (!line) {
 		return;
 	}
-	if (blacklistedEvents.indexOf(line.event) >= 0) {
-		return;
-	}
+	if (whitelistedEvents.indexOf(line.event) >= 0) {
 	return Log.findOrCreate({where: {msg: line, cmdr, event: line.event}})
 		.then(() => {
 
@@ -189,4 +189,7 @@ function processLogLine(line, cmdr, msg) {
 		.catch(err => {
 			console.error(err);
 		});
+	} else {
+		return
+	}
 }
