@@ -5,14 +5,14 @@
 /**
  * ignore
  */
-import {config, genEmbed} from '../utils';
+import {config} from '../utils';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
 import * as Raven from 'raven';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback (data) { // source maps
+	dataCallback(data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -50,7 +50,7 @@ export class RestartCommand extends Commando.Command {
 			.catch(err => {
 				Raven.captureException(err);
 				process.exit(1);
-			})
+			});
 	}
 
 }

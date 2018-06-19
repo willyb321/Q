@@ -56,7 +56,7 @@ export class DistCommand extends Commando.Command {
 	}
 
 	hasPermission(msg) {
-		return true
+		return true;
 	}
 
 	async run(msg, args) {

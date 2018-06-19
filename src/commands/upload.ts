@@ -5,7 +5,7 @@
 /**
  * ignore
  */
-import {config, genEmbed} from '../utils';
+import {config} from '../utils';
 import * as Commando from 'discord.js-commando';
 import {basename, extname, join} from 'path';
 import * as Raven from 'raven';
@@ -14,12 +14,11 @@ import * as LineByLineReader from 'line-by-line';
 import * as request from 'request-promise-native';
 import {tmpdir} from 'os';
 import {createWriteStream} from 'fs';
-import {Log, User} from '../db';
-
+import {Log} from '../db';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback (data) { // source maps
+	dataCallback(data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -33,7 +32,6 @@ Raven.config(config.ravenDSN, {
 		return data;
 	}
 }).install();
-
 
 export class UploadCommand extends Commando.Command {
 	constructor(client) {
@@ -64,8 +62,8 @@ export class UploadCommand extends Commando.Command {
 		request(msg.attachments.first().url)
 			.pipe(createWriteStream(tmppath))
 			.on('close', () => {
-				openZip(tmppath, msg)
-			})
+				openZip(tmppath, msg);
+			});
 	}
 
 }
@@ -79,15 +77,15 @@ function openZip(tmppath, msg) {
 			}
 			console.error(err);
 		}
-		let count = 0;
 		msg.channel.send(`File downloaded and zip opened. ${zipfile.entryCount} entries`);
 		zipfile.readEntry();
 		zipfile.on('end', () => {
-			msg.channel.send(`Zip fully read. ${zipfile.entryCount} entries`);
+			if (zipfile.entriesRead === zipfile.entryCount) {
+				msg.channel.send(`Zip fully read. ${zipfile.entryCount} entries`);
+			}
 		});
-		zipfile.on('entry', function(entry) {
+		zipfile.on('entry', function (entry) {
 			console.log(entry);
-			count++;
 			if (/\/$/.test(entry.fileName) || !isCommanderLog(entry.fileName)) {
 				// Directory file names end with '/'.
 				// Note that entires for directories themselves are optional.
@@ -95,76 +93,84 @@ function openZip(tmppath, msg) {
 				zipfile.readEntry();
 			} else {
 				// file entry
-				zipfile.openReadStream(entry, function(err, readStream) {
+				zipfile.openReadStream(entry, function (err, readStream) {
 					if (err) {
 						throw err;
 					}
-					readStream.on('end', function() {
-						zipfile.readEntry();
+					readStream.on('end', function () {
 					});
 
 					readStream.pipe(createWriteStream(path))
-						.on('close', () => {
-							msg.channel.send(`Processing file ${entry.fileName} (${count}/${zipfile.entryCount})`);
-							readLog(path, msg)
-						})
+						.on('close', async () => {
+							msg.channel.send(`Processing file ${entry.fileName} (${zipfile.entriesRead}/${zipfile.entryCount})`);
+							await readLog(path, msg);
+							zipfile.readEntry();
+						});
 				});
 			}
 		});
 	});
 }
 
+const blacklistedEvents = ['ReceiveText', 'FuelScoop', 'StartJump', 'SendText', 'ApproachSettlement', 'SupercruiseExit', 'Fileheader', 'RefuelAll', 'SupercruiseEntry'];
+
 function readLog(log, msg) {
 	const lr = new LineByLineReader(log);
 	lr.on('error', err => {
+		console.error(err);
 		Raven.captureException(err);
 	});
 	let cmdr: any = '';
 	let lines = [];
-	lr.on('line', line => {
-		Raven.context(function() {
-			Raven.captureBreadcrumb({
-				message: 'Log-process line',
-				data: {
-					line: line,
-					filename: log
+	return new Promise(resolve => {
+		lr.on('line', line => {
+			Raven.context(function () {
+				Raven.captureBreadcrumb({
+					message: 'Log-process line',
+					data: {
+						line,
+						filename: log
+					}
+				});
+				let parsed;
+				if (!parsed) {
+					try {
+						parsed = JSON.parse(line);
+					} catch (e) {
+						if (e.message !== 'Unexpected end of JSON input') {
+							Raven.captureException(e);
+						}
+					}
+					if (parsed) {
+						lines.push(parsed);
+					}
 				}
 			});
-			let parsed;
-			if (!parsed) {
-				try {
-					parsed = JSON.parse(line);
-				} catch (e) {
-					Raven.captureException(e);
-				}
-				if (parsed) {
-					lines.push(parsed);
-				}
+		});
+		lr.on('end', async err => {
+			if (err) {
+				Raven.captureException(err);
 			}
-		})
+			cmdr = lines.find(elem => elem.event === 'Commander');
+			if (cmdr) {
+				cmdr = cmdr.Name;
+			}
+			for (const line of lines) {
+				await processLogLine(line, cmdr, msg);
+			}
+			lines = [];
+			resolve();
+		});
 	});
-	lr.on('end', err => {
-		if (err) {
-			Raven.captureException(err);
-		}
-		cmdr = lines.find(elem => elem.event === 'Commander');
-		if (cmdr) {
-			cmdr = cmdr.Name;
-		}
-		for (const line of lines) {
-			processLogLine(line, cmdr, msg);
-		}
-		lines = [];
-	})
 
 }
 
 /**
  * Get the path of the logs.
- * @param fpath {string} Path to check.
- * @returns {boolean} True if the directory contains journal files.
+ * @param fpath Path to check.
+ * @returns True if the directory contains journal files.
  */
-function isCommanderLog(fpath) {
+function isCommanderLog(fpath: string): boolean {
 	const base = basename(fpath);
 	return base.indexOf('Journal.') === 0 && extname(fpath) === '.log';
 }
@@ -173,11 +179,14 @@ function processLogLine(line, cmdr, msg) {
 	if (!line) {
 		return;
 	}
-	Log.findOrCreate({where: {msg: line, cmdr, event: line.event}})
+	if (blacklistedEvents.indexOf(line.event) >= 0) {
+		return;
+	}
+	return Log.findOrCreate({where: {msg: line, cmdr, event: line.event}})
 		.then(() => {
 
 		})
 		.catch(err => {
 			console.error(err);
-		})
+		});
 }

@@ -4,7 +4,7 @@
 /**
  * ignore
  */
-import {config, genEmbed} from '../utils';
+import {config} from '../utils';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
 import * as Raven from 'raven';

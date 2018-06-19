@@ -1,5 +1,4 @@
 import * as Sequelize from 'sequelize';
-import {seq} from 'async';
 import {config} from './config';
 
 const sequelize = new Sequelize(config.dbName, config.dbUser, config.dbPwd, {
@@ -24,7 +23,7 @@ export const User = sequelize.define('User', {
 });
 
 export const Log = sequelize.define('Log', {
-	msg: Sequelize.JSON,
+	msg: Sequelize.JSONB,
 	cmdr: Sequelize.STRING,
 	event: Sequelize.STRING
 }, {

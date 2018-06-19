@@ -8,11 +8,10 @@
 import 'source-map-support/register';
 import * as Commando from 'discord.js-commando';
 import * as Raven from 'raven';
-import {config, getCmdrInfoFromInara, writeLog} from './utils';
+import {config, getCmdrInfoFromInara} from './utils';
 import {basename, join} from 'path';
 import * as sqlite from 'sqlite';
 import {oneLine} from 'common-tags';
-import {createGunzip} from 'zlib';
 import {TextChannel} from 'discord.js';
 
 process.on('uncaughtException', err => {
@@ -120,7 +119,7 @@ client.on('ready', async () => {
 				console.log(`Failed to change nickname in ${guild.name} - missing perms.`);
 			}
 		}
-	})
+	});
 
 });
 
@@ -136,10 +135,10 @@ client.login(config.token)
 		process.exit(1);
 	});
 
-client.on('guildMemberAdd', (member) => {
+client.on('guildMemberAdd',member => {
 	console.log(`Welcome to ${member.guild.name}, ${member.user.tag}`);
 	if (!client.provider.get(member.guild, 'botSpamJoin', false)) {
-		return
+		return;
 	}
 	const channel = client.provider.get(member.guild, 'botSpam');
 	const lookup = client.provider.get(member.guild, 'botSpamInara', false);
@@ -152,7 +151,7 @@ client.on('guildMemberAdd', (member) => {
 			}
 			return getCmdrInfoFromInara(member.displayName).then(embeddedObject => {
 				if (embeddedObject instanceof Commando.FriendlyError) {
-					return chan.send(embeddedObject.message)
+					return chan.send(embeddedObject.message);
 				}
 				return chan.send({embed: embeddedObject});
 			});
@@ -160,10 +159,10 @@ client.on('guildMemberAdd', (member) => {
 	}
 });
 
-client.on('guildMemberRemove', (member) => {
+client.on('guildMemberRemove',member => {
 	console.log(`\`${member.user.tag}\` left ${member.guild.name}`);
 	if (!client.provider.get(member.guild, 'botSpamLeave', false)) {
-		return
+		return;
 	}
 	const channel = client.provider.get(member.guild, 'botSpam');
 	if (channel) {

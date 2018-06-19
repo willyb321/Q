@@ -4,11 +4,10 @@
 /**
  * ignore
  */
-import {config, genEmbed, getCmdrInfoFromInara, writeLog} from '../utils';
+import {config, getCmdrInfoFromInara, writeLog} from '../utils';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
 import * as Raven from 'raven';
-
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
@@ -27,14 +26,13 @@ Raven.config(config.ravenDSN, {
 	}
 }).install();
 
-
 export class WhoisCommand extends Commando.Command {
 	constructor(client) {
 		super(client, {
 			name: 'whois',
 			group: 'misc',
 			memberName: 'whois',
-			aliases: ["who"],
+			aliases: ['who'],
 			description: 'whois.',
 			details: 'whois.',
 			examples: ['whois'],
@@ -57,7 +55,7 @@ export class WhoisCommand extends Commando.Command {
 		return getCmdrInfoFromInara(args.cmdr).then(embeddedObject => {
 			writeLog(`Execution of getCmdrInfoFromInara() took ${console.timeEnd(`whoislookup-getInaraInfo-${msg.id}`)} ms`, 'Timing');
 			if (embeddedObject instanceof Commando.FriendlyError) {
-				return msg.channel.send(embeddedObject.message)
+				return msg.channel.send(embeddedObject.message);
 			}
 			return msg.channel.send({embed: embeddedObject});
 		});

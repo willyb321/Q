@@ -4,11 +4,10 @@
 /**
  * ignore
  */
-import {config, genEmbed, getEdsmApiResult, getInformationAboutSystem, writeLog} from '../utils';
+import {config, getInformationAboutSystem} from '../utils';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
 import * as Raven from 'raven';
-import * as mathjs from 'mathjs';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
@@ -42,7 +41,7 @@ export class SysCommand extends Commando.Command {
 				{
 					label: 'System',
 					key: 'sys',
-					prompt: "System?",
+					prompt: 'System?',
 					type: 'string'
 				}
 			]
@@ -50,19 +49,19 @@ export class SysCommand extends Commando.Command {
 	}
 
 	hasPermission(msg) {
-		return true
+		return true;
 	}
 
 	async run(msg, args) {
 		return getInformationAboutSystem(args.sys)
 			.then(embed => {
-				return msg.channel.send({embed})
+				return msg.channel.send({embed});
 			})
 			.catch(err => {
 				console.error(err);
 				Raven.captureException(err);
 				return;
-			})
+			});
 	}
 
 }

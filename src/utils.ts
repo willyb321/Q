@@ -1,12 +1,12 @@
-import {config} from "./config";
+import {config} from './config';
 
 export {config} from './config';
 import * as Discord from 'discord.js';
 import * as consola from 'consola';
 import * as rp from 'request-promise';
-import * as Commando from "discord.js-commando";
+import * as Commando from 'discord.js-commando';
 import * as Raven from 'raven';
-import {basename} from "path";
+import {basename} from 'path';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
@@ -51,7 +51,7 @@ export function getInaraPage(page): any { // Grab a whole page's HTML from INARA
 			timeout: 30000
 		})
 			.then(body => {
-				return body
+				return body;
 			})
 			.catch(err => {
 				writeLog('Failed to retrieve INARA page: ' + err, 'HTTP');
@@ -93,12 +93,12 @@ export function getCmdrInfoFromInara(name) { // Search inara for a CMDR, do some
 							cmdrDetails.replace(cmdrDetailsTableRegexp, (match, p1, p2) => {
 								inaraInfo[p1] = p2;
 							});
-							const embed = genEmbed(`INARA Profile:`, `**CMDR ${inaraInfo.CMDR.toUpperCase()}**`);
+							const embed = genEmbed('INARA Profile:', `**CMDR ${inaraInfo.CMDR.toUpperCase()}**`);
 							embed.setThumbnail(`https://inara.cz${cmdrDetailsAvatarMatches[1]}`);
 							embed.setURL(`https://inara.cz/cmdr/${searchResultsMatches[1]}`);
 							for (const inaraInfoEntry in inaraInfo) {
 								if (inaraInfo[inaraInfoEntry] !== '&nbsp;' && inaraInfo[inaraInfoEntry] !== '' && inaraInfo[inaraInfoEntry] !== ' ') {
-									embed.addField(`**${inaraInfoEntry}**: `, inaraInfo[inaraInfoEntry])
+									embed.addField(`**${inaraInfoEntry}**: `, inaraInfo[inaraInfoEntry]);
 								}
 							}
 
@@ -117,7 +117,6 @@ export function getCmdrInfoFromInara(name) { // Search inara for a CMDR, do some
 		}
 	});
 }
-
 
 export function getEdsmApiResult(page, log?) { // Query EDSM's api for something
 	writeLog(`Retrieving EDSM APIv1 results: https://www.edsm.net/api-v1/${page}`, 'HTTP');
@@ -141,7 +140,7 @@ export function getEdsmApiResult(page, log?) { // Query EDSM's api for something
 			console.error(err);
 			Raven.captureException(err);
 			writeLog(`Error retrieving EDSM APIv1 result: ${err}`, 'HTTP');
-		})
+		});
 }
 
 export function getInformationAboutSystem(input) { // Query EDSM for the details about a system
