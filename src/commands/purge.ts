@@ -17,7 +17,7 @@ export class PurgeCommand extends Commando.Command {
 	constructor(client) {
 		super(client, {
 			name: 'purge',
-			group: 'admin',
+			group: 'misc',
 			memberName: 'purge',
 			description: 'Purge messages.',
 			details: 'Purge messages.',
