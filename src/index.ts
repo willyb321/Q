@@ -140,12 +140,15 @@ client.on('guildMemberAdd',member => {
 	if (!client.provider.get(member.guild, 'botSpamJoin', false)) {
 		return;
 	}
+	let msg = client.provider.get(member.guild, 'botSpamLeave', '$USER joined $SERVER');
+	msg.replace('$USER', member.toString());
+	msg.replace('$SERVER', member.guild.name);
 	const channel = client.provider.get(member.guild, 'botSpam');
 	const lookup = client.provider.get(member.guild, 'botSpamInara', false);
 	if (channel) {
 		const chan = member.guild.channels.get(channel) as TextChannel;
 		if (chan) {
-			chan.send(`Welcome to ${member.guild.name}, ${member.toString()}`);
+			chan.send(msg, {disableEveryone: true});
 			if (!lookup) {
 				return;
 			}
@@ -164,11 +167,14 @@ client.on('guildMemberRemove',member => {
 	if (!client.provider.get(member.guild, 'botSpamLeave', false)) {
 		return;
 	}
+	let msg = client.provider.get(member.guild, 'botSpamLeave', '$USER left $SERVER');
+	msg.replace('$USER', member.user.tag.replace('`', ''));
+	msg.replace('SERVER', member.guild.name);
 	const channel = client.provider.get(member.guild, 'botSpam');
 	if (channel) {
 		const chan = member.guild.channels.get(channel) as TextChannel;
 		if (chan) {
-			return chan.send(`\`${member.user.tag.replace('`', '')}\` left ${member.guild.name}`);
+			return chan.send(msg, {disableEveryone: true});
 		}
 	}
 });

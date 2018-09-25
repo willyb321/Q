@@ -48,6 +48,14 @@ export class InitGuildCommand extends Commando.Command {
 				{
 					label: 'leavemsg', key: 'leavemsg',
 					prompt: 'Announce leave?', type: 'boolean'
+				},
+				{
+					label: 'customjoin', key: 'customjoin',
+					prompt: 'Custom join message? Type `.` to set to default', type: 'boolean'
+				},
+				{
+					label: 'customleave', key: 'customleave',
+					prompt: 'Custom leave message? Type `.` to set to default. $USER will be replaced with the username, and $SERVER will be replaced with the server', type: 'string'
 				}
 			]
         });
@@ -63,6 +71,16 @@ export class InitGuildCommand extends Commando.Command {
 			await msg.client.provider.set(msg.guild, 'botSpamInara', args.inara);
 			await msg.client.provider.set(msg.guild, 'botSpamJoin', args.joinmsg);
 			await msg.client.provider.set(msg.guild, 'botSpamLeave', args.leavemsg);
+			if (args.customjoin !== '.') {
+				await msg.client.provider.set(msg.guild, 'botSpamJoinMsg', args.customjoin);
+			} else {
+				await msg.client.provider.set(msg.guild, 'botSpamJoinMsg', '$USER left $SERVER');
+			}
+			if (args.customleave !== '.') {
+				await msg.client.provider.set(msg.guild, 'botSpamLeaveMsg', args.customleave);
+			} else {
+				await msg.client.provider.set(msg.guild, 'botSpamLeaveMsg', '$USER joined $SERVER');
+			}
 		} catch (err) {
 			console.error(err);
 			Raven.captureException(err);

@@ -37,7 +37,6 @@ export class PurgeCommand extends Commando.Command {
 		return client.isOwner(message.author)
 	}
 	async run(message, args) {
-
 		let limit = args.amount;
 		if (!limit) {
 			return;
