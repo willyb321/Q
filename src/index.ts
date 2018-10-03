@@ -164,10 +164,10 @@ client.on('guildMemberAdd',member => {
 
 client.on('guildMemberRemove',member => {
 	console.log(`\`${member.user.tag}\` left ${member.guild.name}`);
-	if (!client.provider.get(member.guild, 'botSpamLeaveMsg', false)) {
+	if (!client.provider.get(member.guild, 'botSpamLeave', false)) {
 		return;
 	}
-	let msg = client.provider.get(member.guild, 'botSpamLeave', '$USER left $SERVER');
+	let msg = client.provider.get(member.guild, 'botSpamLeaveMsg', '$USER left $SERVER');
 	msg.replace('$USER', member.user.tag.replace('`', ''));
 	msg.replace('SERVER', member.guild.name);
 	const channel = client.provider.get(member.guild, 'botSpam');
