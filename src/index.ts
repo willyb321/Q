@@ -141,8 +141,8 @@ client.on('guildMemberAdd',member => {
 		return;
 	}
 	let msg = client.provider.get(member.guild, 'botSpamJoinMsg', '$USER joined $SERVER');
-	msg.replace('$USER', member.toString());
-	msg.replace('$SERVER', member.guild.name);
+	msg = msg.replace('$USER', member.toString());
+	msg = msg.replace('$SERVER', member.guild.name);
 	const channel = client.provider.get(member.guild, 'botSpam');
 	const lookup = client.provider.get(member.guild, 'botSpamInara', false);
 	if (channel) {
@@ -168,8 +168,8 @@ client.on('guildMemberRemove',member => {
 		return;
 	}
 	let msg = client.provider.get(member.guild, 'botSpamLeaveMsg', '$USER left $SERVER');
-	msg.replace('$USER', member.user.tag.replace('`', ''));
-	msg.replace('SERVER', member.guild.name);
+	msg = msg.replace('$USER', member.user.tag);
+	msg = msg.replace('SERVER', member.guild.name);
 	const channel = client.provider.get(member.guild, 'botSpam');
 	if (channel) {
 		const chan = member.guild.channels.get(channel) as TextChannel;
