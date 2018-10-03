@@ -140,7 +140,7 @@ client.on('guildMemberAdd',member => {
 	if (!client.provider.get(member.guild, 'botSpamJoin', false)) {
 		return;
 	}
-	let msg = client.provider.get(member.guild, 'botSpamLeave', '$USER joined $SERVER');
+	let msg = client.provider.get(member.guild, 'botSpamJoinMsg', '$USER joined $SERVER');
 	msg.replace('$USER', member.toString());
 	msg.replace('$SERVER', member.guild.name);
 	const channel = client.provider.get(member.guild, 'botSpam');
@@ -164,7 +164,7 @@ client.on('guildMemberAdd',member => {
 
 client.on('guildMemberRemove',member => {
 	console.log(`\`${member.user.tag}\` left ${member.guild.name}`);
-	if (!client.provider.get(member.guild, 'botSpamLeave', false)) {
+	if (!client.provider.get(member.guild, 'botSpamLeaveMsg', false)) {
 		return;
 	}
 	let msg = client.provider.get(member.guild, 'botSpamLeave', '$USER left $SERVER');
