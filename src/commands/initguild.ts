@@ -51,7 +51,7 @@ export class InitGuildCommand extends Commando.Command {
 				},
 				{
 					label: 'customjoin', key: 'customjoin',
-					prompt: 'Custom join message? Type `.` to set to default', type: 'string'
+					prompt: 'Custom join message? Type `.` to set to default. $USER will be replaced with the username, and $SERVER will be replaced with the server', type: 'string'
 				},
 				{
 					label: 'customleave', key: 'customleave',

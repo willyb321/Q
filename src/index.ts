@@ -169,7 +169,7 @@ client.on('guildMemberRemove',member => {
 	}
 	let msg = client.provider.get(member.guild, 'botSpamLeaveMsg', '$USER left $SERVER');
 	msg = msg.replace('$USER', member.user.tag);
-	msg = msg.replace('SERVER', member.guild.name);
+	msg = msg.replace('$SERVER', member.guild.name);
 	const channel = client.provider.get(member.guild, 'botSpam');
 	if (channel) {
 		const chan = member.guild.channels.get(channel) as TextChannel;
