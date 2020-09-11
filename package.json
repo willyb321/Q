@@ -24,7 +24,7 @@
     "erlpack": "github:hammerandchisel/erlpack",
     "libsodium-wrappers": "^0.5.4",
     "line-by-line": "^0.1.6",
-    "lodash": "^4.17.5",
+    "lodash": "^4.17.19",
     "mathjs": "latest",
     "moment": "^2.22.2",
     "mongoose": "^5.1.5",
