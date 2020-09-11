@@ -35,7 +35,7 @@
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
     "request-promise-native": "^1.0.5",
-    "sequelize": "^4.37.10",
+    "sequelize": "^5.15.1",
     "snoowrap": "latest",
     "source-map-support": "^0.5.4",
     "sqlite": "^2.9.1",
